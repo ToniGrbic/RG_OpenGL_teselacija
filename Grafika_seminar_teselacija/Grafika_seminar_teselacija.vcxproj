@@ -70,6 +70,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>C:\Users\Toni\source\repos\Grafika_seminar_teselacija\Grafika_seminar_teselacija\x64</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -122,7 +125,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>;C:\Users\Toni\source\repos\Grafika_seminar_teselacija\Grafika_seminar_teselacija\imgui; C:\Users\Toni\source\repos\Grafika_seminar_teselacija\Grafika_seminar_teselacija\imgui; imgui; imgui;include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Toni\Downloads\glfw-3.3.9.bin.WIN64\glfw-3.3.9.bin.WIN64\include;</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,29 +135,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>MSVCRT</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>C:\Users\Toni\Downloads\glfw-3.3.9.bin.WIN64\glfw-3.3.9.bin.WIN64\lib-vc2022</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Desktop\imgui\imgui\backends\imgui_impl_glfw.cpp" />
-    <ClCompile Include="..\..\..\..\Desktop\imgui\imgui\backends\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="..\..\..\..\Desktop\imgui\imgui\imgui.cpp" />
-    <ClCompile Include="..\..\..\..\Desktop\imgui\imgui\imgui_demo.cpp" />
-    <ClCompile Include="..\..\..\..\Desktop\imgui\imgui\imgui_draw.cpp" />
-    <ClCompile Include="..\..\..\..\Desktop\imgui\imgui\imgui_tables.cpp" />
-    <ClCompile Include="..\..\..\..\Desktop\imgui\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\..\..\..\Downloads\glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Desktop\imgui\imgui\backends\imgui_impl_glfw.h" />
-    <ClInclude Include="..\..\..\..\Desktop\imgui\imgui\backends\imgui_impl_opengl3.h" />
-    <ClInclude Include="..\..\..\..\Desktop\imgui\imgui\backends\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="..\..\..\..\Desktop\imgui\imgui\imconfig.h" />
-    <ClInclude Include="..\..\..\..\Desktop\imgui\imgui\imgui.h" />
-    <ClInclude Include="..\..\..\..\Desktop\imgui\imgui\imgui_internal.h" />
-    <ClInclude Include="..\..\..\..\Desktop\imgui\imgui\imstb_rectpack.h" />
-    <ClInclude Include="..\..\..\..\Desktop\imgui\imgui\imstb_textedit.h" />
-    <ClInclude Include="..\..\..\..\Desktop\imgui\imgui\imstb_truetype.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

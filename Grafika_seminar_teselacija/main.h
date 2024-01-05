@@ -6,12 +6,11 @@
 #include <string>
 #include <vector>
 
-#include "imgui/imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "glm/glm.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Window variables
 GLFWwindow* window;
@@ -29,34 +28,20 @@ GLuint shaderProgram;
 // Textures
 GLuint screen;
 
-// Variables used to determine framerate
-double previousUpdateTime = 0.0;
-double currentUpdateTime = 0.0;
-double timeDeltaFramerate = 0.0;
-int framesCounter = 0;
-int avgCounter = 0;
-double fpsTotal = 0.0;
-double msTotal = 0.0;
-
-// Variables used for logic
-double timeDelta = 0.0;
-double previousTime = 0.0;
-
 std::vector<GLfloat> genNonSymPlaneUniform(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, int div)
 {
 	std::vector<GLfloat> plane;
-
+	// Calculate directional vectors
 	glm::vec3 dir03 = (v3 - v0) / float(div);
 	glm::vec3 dir12 = (v2 - v1) / float(div);
 
-	// dir2 and dir3
+	// Loop over divisions in the first direction
 	for (int i = 0; i < div + 1; i++)
 	{
 		glm::vec3 dir03i = dir03 * float(i);
-		// dir1
+		// Loop over divisions in the second direction
 		for (int j = 0; j < div + 1; j++)
 		{
-			
 			glm::vec3 acrossj = ((v1 + dir03i) - (v0 + dir03i)) / float(div);
 			glm::vec3 dir12j = acrossj * float(j);
 			glm::vec3 crntVec = v0 + dir03i + dir12j;
@@ -64,12 +49,11 @@ std::vector<GLfloat> genNonSymPlaneUniform(glm::vec3 v0, glm::vec3 v1, glm::vec3
 			plane.push_back(crntVec.x);
 			plane.push_back(crntVec.y);
 			plane.push_back(crntVec.z);
-			// Tex UV
+			// Texture UV coodrs
 			plane.push_back(float(j) / div);
 			plane.push_back(float(i) / div);
 		}
 	}
-
 	return plane;
 }
 
@@ -137,7 +121,7 @@ std::vector<GLuint> indices = genPlaneIndTes(divisions);
 void init()
 {
 	glfwInit();
-	IMGUI_CHECKVERSION();
+	
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -156,7 +140,6 @@ void createContext()
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(vSync);
 
-	ImGui::CreateContext();
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize OpenGL context\n";
@@ -169,86 +152,6 @@ void glEnableConfig()
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 }
-
-ImGuiIO& imGuiInit()
-{
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
-	ImGui_ImplOpenGL3_Init("#version 460");
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-	ImGuiStyle* style = &ImGui::GetStyle();
-	style->WindowRounding = 10.0f;
-	style->Colors[ImGuiCol_Border] = ImVec4(0.000f, 0.000f, 0.000f, 0.000f);
-	style->Colors[ImGuiCol_WindowBg] = ImVec4(0.115f, 0.123f, 0.131f, 0.500f);
-	style->Colors[ImGuiCol_TitleBg] = ImVec4(0.084f, 0.092f, 0.100f, 1.000f);
-	style->Colors[ImGuiCol_TitleBgActive] = ImVec4(0.124f, 0.132f, 0.140f, 1.000f);
-	style->Colors[ImGuiCol_ResizeGrip] = ImVec4(0.124f, 0.132f, 0.140f, 1.000f);
-	style->Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.084f, 0.092f, 0.100f, 1.000f);
-	style->Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.084f, 0.092f, 0.100f, 1.000f);
-
-	return io;
-}
-
-void displayStats()
-{
-	currentUpdateTime = glfwGetTime();
-	timeDeltaFramerate = currentUpdateTime - previousUpdateTime;
-	framesCounter++;
-
-	if (timeDeltaFramerate >= 1.0 / 10.0 && currentUpdateTime > 5.0)
-	{
-		double fps = framesCounter / timeDeltaFramerate;
-		double ms = timeDeltaFramerate / framesCounter * 1000.0;
-
-		fpsTotal += fps;
-		msTotal += ms;
-		avgCounter++;
-		double avgfps = fpsTotal / avgCounter;
-		double avgms = msTotal / avgCounter;
-
-		std::string fpsStr = std::to_string((int)fps);
-		std::string avgfpsStr = std::to_string((int)avgfps);
-		std::string msStr = std::to_string(ms).substr(0, 6);
-		std::string avgmsStr = std::to_string(avgms).substr(0, 6);
-		std::string newWindowTitle = windowName + " - " + fpsStr + "(" + avgfpsStr + ")" + "FPS / " + msStr + "(" + avgmsStr + ")" + "ms";
-		glfwSetWindowTitle(window, newWindowTitle.c_str());
-
-		previousUpdateTime = currentUpdateTime;
-		framesCounter = 0;
-	}
-}
-
-void updateTimeDelta()
-{
-	double currentTime = glfwGetTime();
-	timeDelta = currentTime - previousTime;
-	previousTime = currentTime;
-}
-
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-	if (key == GLFW_KEY_V && action == GLFW_PRESS)
-	{
-		vSync = !vSync;
-		glfwSwapInterval(vSync);
-	}
-	if (key == GLFW_KEY_C && action == GLFW_PRESS)
-		wireframe = !wireframe;
-}
-
-void terminate(GLFWwindow* window)
-{
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
-
-	glfwDestroyWindow(window);
-	glfwTerminate();
-}
-
-
 
 std::string readText(const char* textFile)
 {
@@ -270,13 +173,19 @@ void initRender()
 {
 	std::string vertexCode = readText("vertex.vert");
 	std::string fragmentCode = readText("fragment.frag");
+
+	//zakomentirati za iskljuciti teselaciju
 	std::string tesControlCode = readText("tessellation.tesc");
 	std::string tesEvalCode = readText("tessellation.tese");
+	//----------------------------------------------------
 
 	const char* vertexSource = vertexCode.c_str();
 	const char* fragmentSource = fragmentCode.c_str();
+
+	//zakomentirati za iskljuciti teselaciju
 	const char* tesControlSource = tesControlCode.c_str();
 	const char* tesEvalSource = tesEvalCode.c_str();
+	//----------------------------------------------------
 
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexSource, NULL);
@@ -284,25 +193,34 @@ void initRender()
 	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
 	glCompileShader(fragmentShader);
+
+	//zakomentirati za iskljuciti teselaciju
 	GLuint tesControlShader = glCreateShader(GL_TESS_CONTROL_SHADER);
 	glShaderSource(tesControlShader, 1, &tesControlSource, NULL);
 	glCompileShader(tesControlShader);
 	GLuint tesEvalShader = glCreateShader(GL_TESS_EVALUATION_SHADER);
 	glShaderSource(tesEvalShader, 1, &tesEvalSource, NULL);
 	glCompileShader(tesEvalShader);
+	//----------------------------------------------------
 
 	shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
+
+	//zakomentirati za iskljuciti teselaciju
 	glAttachShader(shaderProgram, tesControlShader);
 	glAttachShader(shaderProgram, tesEvalShader);
+	//----------------------------------------------------
+
 	glLinkProgram(shaderProgram);
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+
+	//zakomentirati za iskljuciti teselaciju
 	glDeleteShader(tesControlShader);
 	glDeleteShader(tesEvalShader);
-
+	//---------------------------------
 
 	glCreateVertexArrays(1, &VAO);
 	glCreateBuffers(1, &VBO);
