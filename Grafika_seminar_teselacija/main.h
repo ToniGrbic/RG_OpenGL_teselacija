@@ -174,7 +174,7 @@ void initRender()
 	std::string vertexCode = readText("vertex.vert");
 	std::string fragmentCode = readText("fragment.frag");
 
-	//zakomentirati za iskljuciti teselaciju
+	//comment this block to disable teselation
 	std::string tesControlCode = readText("tessellation.tesc");
 	std::string tesEvalCode = readText("tessellation.tese");
 	//----------------------------------------------------
@@ -182,7 +182,7 @@ void initRender()
 	const char* vertexSource = vertexCode.c_str();
 	const char* fragmentSource = fragmentCode.c_str();
 
-	//zakomentirati za iskljuciti teselaciju
+	//comment this block to disable teselation
 	const char* tesControlSource = tesControlCode.c_str();
 	const char* tesEvalSource = tesEvalCode.c_str();
 	//----------------------------------------------------
@@ -194,7 +194,7 @@ void initRender()
 	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
 	glCompileShader(fragmentShader);
 
-	//zakomentirati za iskljuciti teselaciju
+	//comment this block to disable teselation
 	GLuint tesControlShader = glCreateShader(GL_TESS_CONTROL_SHADER);
 	glShaderSource(tesControlShader, 1, &tesControlSource, NULL);
 	glCompileShader(tesControlShader);
@@ -207,7 +207,7 @@ void initRender()
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 
-	//zakomentirati za iskljuciti teselaciju
+	//comment this to disable teselation
 	glAttachShader(shaderProgram, tesControlShader);
 	glAttachShader(shaderProgram, tesEvalShader);
 	//----------------------------------------------------
@@ -217,7 +217,7 @@ void initRender()
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	//zakomentirati za iskljuciti teselaciju
+	//comment this block to disable teselation
 	glDeleteShader(tesControlShader);
 	glDeleteShader(tesEvalShader);
 	//---------------------------------

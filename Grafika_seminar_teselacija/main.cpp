@@ -7,7 +7,7 @@ int main()
 	glEnableConfig();
 	initRender();
 
-	//zakomentirati za iskljucit teselaciju
+	//comment this to disable teselation
 	glPatchParameteri(GL_PATCH_VERTICES, 4); // Quads
 	//----------------------------------------
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
